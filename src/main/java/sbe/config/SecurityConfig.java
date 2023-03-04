@@ -24,11 +24,15 @@ public class SecurityConfig {
             .csrf().disable()
             .cors()
             .and()
-            .authorizeRequests(auth ->
-                auth
-                    .anyRequest().
-                    authenticated()
-            )
+            .authorizeHttpRequests()
+            // .authorizeRequests(auth ->
+            //     auth
+            //         .anyRequest().
+            //         authenticated()
+            // )
+            .anyRequest()
+            .permitAll()
+            .and()
             .oauth2ResourceServer()
             .accessDeniedHandler(authExceptionHandler)
             .authenticationEntryPoint(authExceptionHandler)

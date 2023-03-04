@@ -3,18 +3,27 @@ package sbe.rest.advice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import sbe.dto.ErrorDto;
 
 @RestControllerAdvice
 @Slf4j
 public class RestAdvice {
+    private ResponseEntity<ErrorDto> respond(HttpStatus status, ErrorDto errorDto) {
+        return ResponseEntity.status(status).body(errorDto);
+    }
+
     @ExceptionHandler(Exception.class)
     ResponseEntity<?> handleException(Exception ex, WebRequest request) {
+        if (ex instanceof AccessDeniedException) {
+            return respond(HttpStatus.FORBIDDEN, new ErrorDto(ErrorDto.ErrorCode.ACCESS_DENIED, "Access has been denied to a resource"));
+        }
+
         log.error("An unhandled exception occurred", ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": true}");
-        // return respond(HttpStatus.INTERNAL_SERVER_ERROR, ErrorDto.ErrorCode.UNKNOWN, "An internal server error has occurred");
+        return respond(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorDto(ErrorDto.ErrorCode.UNKNOWN, "An unknown issue has occurred"));
     }
 
     // @ExceptionHandler(NoHandlerFoundException.class)
