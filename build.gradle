@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group 'sbe'
+version '1.0-SNAPSHOT'
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-websocket:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.0.0'
+    implementation 'org.springframework.boot:spring-boot-starter-security:3.0.0'
+    implementation 'org.springframework.data:spring-data-envers:3.0.0'
+    implementation 'org.apache.commons:commons-text:1.10.0'
+    implementation 'commons-validator:commons-validator:1.7'
+    implementation 'org.postgresql:postgresql:42.5.1'
+    implementation 'com.graphql-java-kickstart:graphql-spring-boot-starter:15.0.0'
+    implementation 'com.graphql-java-kickstart:graphql-java-tools:13.0.2'
+    runtimeOnly 'com.h2database:h2:2.1.212'
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:3.0.0'
+    testImplementation 'com.graphql-java-kickstart:graphql-spring-boot-starter-test:15.0.0'
+}
+
+bootRun {
+    jvmArgs = ["-agentlib:jdwp=transport=dt_socket,server=y,address=5005,suspend=n"]
+}
+
+test {
+    useJUnitPlatform()
+}

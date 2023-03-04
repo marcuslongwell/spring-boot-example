@@ -1,0 +1,19 @@
+{
+  "interactiveLogin": true,
+  "httpServer": "NettyWrapper",
+  "tokenCallbacks": [
+    {
+      "issuerId": "issuer",
+      "tokenExpiry": 120,
+      "requestMappings": [
+        {
+          "requestParam": "scope",
+          "match": "all",
+          "claims": {
+            "sub": "user"
+          }
+        }
+      ]
+    }
+  ]
+}

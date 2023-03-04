@@ -1,0 +1,76 @@
+# environment variables in this file should match up with those specified in the dotenv file (example.env)
+
+# standard logging levels (see https://docs.spring.io/spring-boot/docs/2.1.13.RELEASE/reference/html/boot-features-logging.html for other levels)
+logging:
+  level: 
+    root: INFO
+    sbe: DEBUG
+
+server:
+  protocol: ${SERVER_PROTOCOL_INTERNAL:http}
+  port: ${SERVER_PORT_INTERNAL:8080}
+  address: ${SERVER_HOST_INTERNAL:0.0.0.0}
+  error:
+    whitelabel:
+      enabled: false
+  # the public address information (shown to users), can leave port blank if 80 for HTTP or 443 for HTTPS
+  public:
+    protocol: ${SERVER_PROTOCOL_PUBLIC:http}
+    port: ${SERVER_PORT_PUBLIC:3000}
+    address: ${SERVER_HOST_PUBLIC:localhost}
+
+spring:
+  profiles:
+    active: ${ACTIVE_OVERRIDE_PROFILE:override}
+  mvc:
+    throw-exception-if-no-handler-found: true
+  resources:
+    add-mappings: false
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    # jackson json serialization of date formatting in ISO-8601
+    date-format: com.fasterxml.jackson.databind.util.ISO8601DateFormat
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${OAUTH_ISSUER_URI:http://host.docker.internal:5325/issuer}
+  jpa:
+    show-sql: false
+    generate-ddl: true
+    database: POSTGRESQL
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc:
+          lob:
+            non_contextual_creation: true
+    datasource: 
+      platform: postgres
+      driverClassName: org.postgresql.Driver
+      host: ${DB_HOST:host.docker.internal}
+      port: ${DB_PORT:5432}
+      db: ${DB_NAME:sbe}
+      url: ${DB_URL:jdbc:postgresql://host.docker.internal:5432/sbe}
+      username: ${DB_USERNAME:postgres}
+      password: ${DB_PASSWORD:postgres}
+
+graphql:
+  servlet:
+    enabled: true
+    mapping: /graph
+    cors-enabled: false
+    exception-handlers-enabled: true
+    context-setting: PER_REQUEST_WITH_INSTRUMENTATION
+    async-mode-enabled: true
+
+sbe:
+  username:
+    length:
+      min: 3
+      max: 63
+  cors:
+    origins: ${ALLOWED_CORS_ORIGINS:http://host.docker.internal:3001,http://localhost:3001}

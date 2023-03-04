@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:${POSTGRES_IMAGE_VERSION:-14.6}
+    env_file:
+      - ./postgres/.env
+    ports:
+      - "${POSTGRES_PORT_EXPOSED:-5432}:5432"
+    volumes:
+      - ./postgres/data:/data/db
+      - ./postgres/schema:/docker-entrypoint-initdb.d
+  oauth:
+    image: ghcr.io/navikt/mock-oauth2-server:${MOCK_OAUTH2_SERVER_VERSION:-0.5.7}
+    env_file:
+      - ./oauth/.env
+    ports:
+      - ${MOCK_OAUTH2_PORT_EXPOSED:-5325}:8080
+    # hostname: host.docker.internal
+  spring-boot-example:
+    depends_on:
+      - postgres
+      - oauth
+    build:
+      context: ..
+      dockerfile: .devcontainer/app/Dockerfile
+    env_file:
+      - ./app/.env
+    ports:
+      - "${SERVER_PORT_EXPOSED:-3000}:8080"
+      - "${DEBUG_PORT_EXPOSED:-5005}:5005"
+    volumes:
+      - ..:/workspace
+    
+  
